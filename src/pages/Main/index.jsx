@@ -7,16 +7,30 @@ export default function Main(){
     const [newRepo, setNewRepo] = useState('');
     const [repositorios,setRepositorios] = useState([]);
     const [loading,setLoading] = useState(false);
+    const [alert,setAlert] = useState(null);
 
     function handleInputChange(event){
         setNewRepo(event.target.value);
+        setAlert(null);
     }
 
     const handleSubmit = useCallback((event)=> {
         event.preventDefault();
         setLoading(true);
+        setAlert(null);
         async function submit(){
-            try{       
+            try{  
+                    
+                if(newRepo === ''){
+                    throw new Error('Voce precisa indicar um repositorio!');
+                }
+
+                const hasRepo = repositorios.find( repo => repo.name === newRepo);
+
+                if(hasRepo){
+                    throw new Error('Repositorio duplicado');
+                }
+
                 const response = await api.get(`repos/${newRepo}`);
                 const data = {
                     name: response.data.full_name
@@ -24,7 +38,8 @@ export default function Main(){
                 setRepositorios([...repositorios,data]);
                 setNewRepo('');
             }catch(error){
-                console.log(error)
+                setAlert(error);
+                console.log(true)
             }finally{
                 setLoading(false);
             }
@@ -43,7 +58,7 @@ export default function Main(){
                 <FaGithub size={40}/>    
                 Meus repositórios
             </h1>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} error={alert}>
                 <input 
                     type='text' 
                     placeholder='Adicionar repositório'

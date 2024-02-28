@@ -6,7 +6,7 @@ export default function Router(){
     return(
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Main/>}/>
+                <Route exact path="/" element={<Main/>}/>
                 <Route path="/repositorio/:repositorio" element={<Repositorio/>}/>
             </Routes>
         </BrowserRouter>
